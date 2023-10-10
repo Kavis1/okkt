@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Расписание</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Расписание</h1>
+    </header>
+    <div class="button-container">
+        <a href="index.html" class="btn">Главная</a>
+    </div>
+    <div class="schedule-container">
+        <div class="day">
+            <h2>Понедельник</h2>
+            <div class="task" draggable="true">Занятие 1</div>
+            <div class="task" draggable="true">Занятие 2</div>
+            <div class="task" draggable="true">Занятие 3</div>
+            <div class="task" draggable="true">Занятие 4</div>
+        </div>
+		<div class="day">
+            <h2>Вторник</h2>
+            <div class="task" draggable="true">Занятие 1</div>
+            <div class="task" draggable="true">Занятие 2</div>
+            <div class="task" draggable="true">Занятие 3</div>
+            <div class="task" draggable="true">Занятие 4</div>
+        </div>
+		<div class="day">
+            <h2>Среда</h2>
+            <div class="task" draggable="true">Занятие 1</div>
+            <div class="task" draggable="true">Занятие 2</div>
+            <div class="task" draggable="true">Занятие 3</div>
+            <div class="task" draggable="true">Занятие 4</div>
+        </div>
+		<div class="day">
+            <h2>Четверг</h2>
+            <div class="task" draggable="true">Занятие 1</div>
+            <div class="task" draggable="true">Занятие 2</div>
+            <div class="task" draggable="true">Занятие 3</div>
+            <div class="task" draggable="true">Занятие 4</div>
+        </div>
+		<div class="day">
+            <h2>Пятница</h2>
+            <div class="task" draggable="true">Занятие 1</div>
+            <div class="task" draggable="true">Занятие 2</div>
+            <div class="task" draggable="true">Занятие 3</div>
+            <div class="task" draggable="true">Занятие 4</div>
+        </div>
+        <!-- Добавьте расписание для остальных дней недели -->
+    </div>
+    <button id="lock-button">Замок</button>
+    <script>
+        const goToMainPage = () => {
+            window.location.href = 'index.html';
+        }
+
+        document.querySelector('a[href="index.html"]').addEventListener('click', function (e) {
+            e.preventDefault();
+            goToMainPage();
+        });
+
+        let isLocked = false;
+
+        document.getElementById('lock-button').addEventListener('click', function () {
+            isLocked = !isLocked;
+            const tasks = document.querySelectorAll('.task');
+            tasks.forEach(task => {
+                if (isLocked) {
+                    task.style.cursor = 'default';
+                    task.removeAttribute('draggable');
+                } else {
+                    task.style.cursor = 'pointer';
+                    task.draggable = true;
+                }
+            });
+        });
+
+        let dragSrcEl = null;
+
+        function handleDragStart(e) {
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/html', this.innerHTML);
+            dragSrcEl = this;
+        }
+
+        function handleDragOver(e) {
+            if (e.preventDefault) {
+                e.preventDefault();
+            }
+            e.dataTransfer.dropEffect = 'move';
+            return false;
+        }
+
+        function handleDragEnter(e) {
+            this.classList.add('over');
+        }
+
+        function handleDragLeave(e) {
+            this.classList.remove('over');
+        }
+
+        function handleDrop(e) {
+            if (e.stopPropagation) {
+                e.stopPropagation();
+            }
+            if (dragSrcEl !== this) {
+                dragSrcEl.innerHTML = this.innerHTML;
+                this.innerHTML = e.dataTransfer.getData('text/html');
+            }
+            return false;
+        }
+
+        function handleDragEnd() {
+            const tasks = document.querySelectorAll('.task');
+            tasks.forEach(task => {
+                task.classList.remove('over');
+            });
+        }
+
+        const tasks = document.querySelectorAll('.task');
+        tasks.forEach(task => {
+            task.addEventListener('dragstart', handleDragStart);
+            task.addEventListener('dragover', handleDragOver);
+            task.addEventListener('dragenter', handleDragEnter);
+            task.addEventListener('dragleave', handleDragLeave);
+            task.addEventListener('drop', handleDrop);
+            task.addEventListener('dragend', handleDragEnd);
+        });
+    </script>
+</body>
+</html>
